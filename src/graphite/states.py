@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ExecutionState(str, Enum):
-    CONTINUE: str = "CONTINUE"
+    FORWARD: str = "FORWARD"
     TERMINATE: str = "TERMINATE"
     PAUSE: str = "PAUSE"
     RETURN: str = "RETURN"

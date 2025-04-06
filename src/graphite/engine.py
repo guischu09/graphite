@@ -1,9 +1,8 @@
-from graphite.node import Node, NodeStatus
+from graphite.node import Node
 from graphite.states import ExecutionState
 from typing import List, Dict, Any, Callable, Optional
 from threading import Event
 import logging
-from enum import Enum
 
 
 class Engine:
@@ -33,10 +32,6 @@ class Engine:
 
     def run(self, stop_event: Event = Event()):
         self.stop_event = stop_event
-
-        # for name, subsystem in self.subsystems.items():
-        #    subsystem.start()
-
         try:
             self._run_loop()
         except Exception as e:
@@ -60,17 +55,17 @@ class Engine:
                     self.stop_event.set()
                     break
 
-                if node_status == NodeStatus.SUCCESS:
-                    node.output = func_output
-
                 if execution_state == ExecutionState.RETURN:
                     for n in self.nodes:
                         n.output = None
                         node_index = 0  # Go back to the first task
                         continue
 
-                if execution_state == ExecutionState.CONTINUE:
+                if execution_state == ExecutionState.FORWARD:
                     node_index += 1
+
+                if execution_state not in ExecutionState:
+                    raise ValueError("Not valid ExecutionState.")
 
     def _get_input_values(self, node: Node) -> List[Any]:
         input_values = []
